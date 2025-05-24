@@ -35,5 +35,5 @@ We always welcome new ideas and contributions! Join our community:
 
 ---
 
-##👑 Founder
+## 👑 Founder
 **Jaxon Tran** – A visionary founder with the passion and drive to build a sustainable and comprehensive ecosystem.
