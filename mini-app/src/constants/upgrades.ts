@@ -9,7 +9,7 @@ export const UPGRADE_ITEMS = [
     {
       id: 'pickaxe-2',
       name: 'Iron Pickaxe',
-      description: 'Increases mining power by 3',
+      description: 'Increases mining power by 3', 
       cost: 30,
       powerBoost: 3,
     },
