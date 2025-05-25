@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    image: trivien/viberty-landing-page
+    build: .
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+    restart: unless-stopped
