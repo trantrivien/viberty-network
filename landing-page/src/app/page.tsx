@@ -113,16 +113,7 @@ const Home = () => {
       </header>
 
       <div className="bg-grid relative">
-      <video className="z-1 absolute hidden 2xl:block"
-            src="/hero.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{ width: '100%', height: 'auto' }}
-        >
-            Your browser does not support the video tag.
-        </video>
+    
         <section className="mx-auto max-w-[1400px] px-4 pt-7 lg:px-5 lg:pt-[67.5px]">
           <div className="relative">
             <div className="shooter shooter--1"></div>
@@ -197,7 +188,7 @@ const Home = () => {
             <div className="absolute inset-0 mt-[-50px]">
               <Image
                 className="object-contain"
-                src="/dashboard2.png"
+                src="/dashboard.svg"
                 alt="Dashboard"
                 fill
               />

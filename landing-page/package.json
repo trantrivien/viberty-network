@@ -16,6 +16,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-tweet-embed": "^2.0.0",
+    "sharp": "^0.34.2",
     "swiper": "^10.0.4",
     "tailwind-merge": "^1.13.2"
   },
