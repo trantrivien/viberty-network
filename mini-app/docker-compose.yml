@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  react-app:
+    image: trivien/viberty-mini-app:latest
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0

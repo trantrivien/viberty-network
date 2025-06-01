@@ -1,4 +1,4 @@
-package com.example.app;
+package com.viberty.network;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -70,6 +70,8 @@ body {
   touch-action: manipulation; /* Ngăn pinch-zoom và double-tap */
   -ms-touch-action: manipulation;
   overscroll-behavior: none; /* Ngăn scroll ảnh hưởng lên trang */
+  font-family: 'Orbitron', sans-serif;
+
 }
 
 @theme inline {
@@ -169,7 +171,8 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Orbitron', sans-serif;
+
 }
 
 @layer base {

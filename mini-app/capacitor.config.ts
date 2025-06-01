@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: "viberty.network.app",
   backgroundColor: "#000",
   appName: "Viberty",
-  webDir: "out",
+  webDir: 'mobile_www',
   plugins: {
     SplashScreen: {
       launchAutoHide: true,
