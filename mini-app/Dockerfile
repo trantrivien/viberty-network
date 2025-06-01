@@ -1,36 +1,20 @@
-# Use an official Node.js runtime as a base image
+# base image
 FROM node:20.10-alpine
 
-# Set working directory
 WORKDIR /usr/app
 
-# Install PM2 globally
-RUN npm install --global pm2
-
-# Copy "package.json" and "package-lock.json" before other files
-# Utilise Docker cache to save re-installing dependencies if unchanged
+# copy only package.json và package-lock.json
 COPY ./package*.json ./
 
-# Install dependencies
-RUN npm install
+# cài dependencies và devDependencies (để build)
+RUN npm ci
 
-
-
-# Copy all files
-COPY ./ ./
-
-# Change ownership to the non-root user
+# copy toàn bộ mã nguồn
+COPY . .
 RUN chown -R node:node /usr/app
 
-# Build app
+# build Next.js
 RUN npm run build
 
-# Expose the listening port
-EXPOSE 3000
-
-# Run container as non-root (unprivileged) user
-# The "node" user is provided in the Node.js Alpine base image
-USER node
-
-# Launch app with PM2
-CMD [ "pm2-runtime", "start", "npm", "--", "run", "dev", "--", "--hostname", "0.0.0.0" ]
+# start app
+CMD ["npm", "start"]
