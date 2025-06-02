@@ -1,11 +1,12 @@
 version: '3.8'
 
 services:
-  react-app:
-    image: trivien/viberty-mini-app:latest
-    restart: unless-stopped
+  nextjs-app:
+    image: trivien/viberty-mini-app
+    build: .
     ports:
-      - "3000:3003"
+      - "3003:3000"
     environment:
       - NODE_ENV=production
       - HOST=0.0.0.0
+    restart: unless-stopped
