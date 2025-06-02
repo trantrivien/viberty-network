@@ -1,20 +1,26 @@
-# base image
-FROM node:20.10-alpine
+# Use a Node.js base image
+FROM node:20-alpine
 
-WORKDIR /usr/app
+# Install build tools for native dependencies
+RUN apk add --no-cache python3 make g++ bash
 
-# copy only package.json và package-lock.json
-COPY ./package*.json ./
+# Set working directory
+WORKDIR /app
 
-# cài dependencies và devDependencies (để build)
-RUN npm ci
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# copy toàn bộ mã nguồn
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
 COPY . .
-RUN chown -R node:node /usr/app
 
-# build Next.js
+# Build the Next.js app
 RUN npm run build
 
-# start app
-CMD ["npm", "start"]
+# Expose the port Next.js runs on
+EXPOSE 3001
+
+# Start the app
+CMD ["npm", "run", "start"]
