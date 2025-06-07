@@ -7,6 +7,7 @@ RUN apk add --no-cache python3 make g++ bash
 # Set working directory
 WORKDIR /app
 
+
 # Copy package.json and package-lock.json
 COPY package*.json ./
 

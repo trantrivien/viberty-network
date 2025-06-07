@@ -22,17 +22,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Fonts CDN link for Orbitron */}
         <link
           href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
+        <title>Viberty Network</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
       </head>
-      {/* Thêm class font-orbitron cho body để apply font */}
       <body className="font-orbitron">
         <ThirdwebProvider>
           <AnimatePresence mode="wait">
