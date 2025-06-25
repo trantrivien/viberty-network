@@ -2,15 +2,12 @@
 
 import ScreenLoading from "@/components/ScreenLoading";
 
+import { connectUser } from "@/lib/services/authService";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  ConnectButton,
-  useConnectedWallets,
-  useActiveWallet,
-} from "thirdweb/react";
+import { ConnectButton, useActiveWallet } from "thirdweb/react";
 import { client } from "./client";
-import { motion } from "framer-motion";
 
 export default function Page() {
   const router = useRouter();
@@ -25,9 +22,23 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, [router]);
 
+  const login = async () => {
+    const address = wallet?.getAccount()?.address ?? "";
+    const chainId = wallet?.getChain()?.id;
+    if (!address || !chainId) throw new Error("Wallet not connected");
+    await connectUser(address, chainId)
+      .then((res) => {
+        router.push('/home');
+        console.log("✅ Logged in as:", res.user.username);
+      })
+      .catch((err) => {
+        console.error("❌ Connect failed:", err.message);
+      });
+  };
+
   useEffect(() => {
-    if (wallet?.id) {
-      router.push("/home");
+    if (wallet?.getAccount()?.address) {
+      login();
     }
   }, [wallet?.id]);
   return (
@@ -47,6 +58,7 @@ export default function Page() {
                 label: "Sign in to VIBERTY",
                 className: "custom_btn_connect",
               }}
+              autoConnect
               connectModal={{
                 title: "Sign in to VIBERTY",
                 titleIcon: "/assets/images/main_logo.png",

@@ -8,7 +8,7 @@ import { FaBolt, FaBullseye, FaUsers, FaWallet } from "react-icons/fa";
 const navItems = [
   { path: "/home", icon: FaBolt, label: "Mine" },
   { path: "/shop", icon: FaWallet, label: "Shop" },
-  { path: "/missions", icon: FaBullseye, label: "Missions" },
+  { path: "/game", icon: FaBullseye, label: "Game" },
   { path: "/friends", icon: FaUsers, label: "Friends" },
 ];
 
