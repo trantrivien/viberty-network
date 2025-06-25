@@ -36,4 +36,4 @@ We always welcome new ideas and contributions! Join our community:
 ---
 
 ## 👑 Founder
-**Jaxon Tran** – A visionary founder with the passion and drive to build a sustainable and comprehensive ecosystem.
+**Vien Tran (Jaxon)** – A visionary founder with the passion and drive to build a sustainable and comprehensive ecosystem.
