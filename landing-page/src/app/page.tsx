@@ -871,16 +871,16 @@ const Home = () => {
 
             <section className="relative mx-auto mt-[78px] max-w-[1400px] lg:mt-[180px] lg:px-0">
               <div className="px-5">
-                <h2 className="relative z-10 mx-auto max-w-[730px] bg-gradient-to-b from-white to-white/50 bg-clip-text text-center text-[26px] font-medium leading-9 text-transparent lg:text-5xl lg:font-semibold lg:leading-[60px]">
-                  What Viberty Network users are saying
+                <h2 className="relative z-10 mx-auto h-[120px] max-w-[730px] bg-gradient-to-b from-white to-white/50 bg-clip-text text-center text-[26px] font-medium leading-9 text-transparent lg:text-5xl lg:font-semibold lg:leading-[60px]">
+                  {/* What Viberty Network users are saying */}
                 </h2>
 
                 <TweetsEllipses className="absolute inset-x-0 mx-auto -mt-32 max-w-[400px] lg:max-w-[528px]" />
               </div>
 
               <div className="relative mt-[62px]">
-                <SwiperLg />
-                <SwiperBase />
+                {/* <SwiperLg />
+                <SwiperBase /> */}
               </div>
             </section>
 
@@ -905,11 +905,11 @@ const Home = () => {
               </Link>
 
               <div className="relative mt-8 h-[139px] sm:h-[208.5px] lg:mt-14 lg:h-[278px]">
-                <WhaleBannerAnimation />
+                {/* <WhaleBannerAnimation /> */}
               </div>
             </section>
 
-            <footer className="mt-[60px] border-t border-white/20 px-5 lg:mt-20">
+            <footer className=" px-5 lg:mt-20">
               {/* <div className="mx-auto grid max-w-[1400px] gap-y-7 px-5 pt-3 sm:grid-cols-2 lg:grid-cols-4 lg:pt-20">
                 <div>
                   <LogoLg />

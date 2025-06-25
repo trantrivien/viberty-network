@@ -2,7 +2,7 @@ import { TwitterX, Telegram, Medium, Discord, Facebook } from "@/components/icon
 
 export const socialLinks = [
   {
-    link: "https://twitter.com/viberty",
+    link: "https://x.com/VibertyNetwork",
     icon: TwitterX,
   },
   // {
@@ -18,11 +18,11 @@ export const socialLinks = [
   //   icon: Linkedin,
   // },
   {
-    link: "https://facebook.com/viberty",
+    link: "https://facebook.com/viberty.network",
     icon: Facebook,
   },
   {
-    link: "https://t.me/+zg-qnzMC-xE0OTZk",
+    link: "https://t.me/VibertyNetworkBot",
     icon: Telegram,
   },
   // {
