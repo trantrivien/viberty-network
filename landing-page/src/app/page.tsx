@@ -134,14 +134,14 @@ const Home = () => {
             <div className="mt-[38px] inline-flex flex-col items-center gap-x-6 gap-y-[18px] lg:mt-12">
               <div className="flex flex-col items-center justify-between space-x-4 lg:flex-row">
                 <Link
-                  href="https://forms.gle/fuYGBJQF5W4amLdt6"
+                  href="#"
                   className="inline-flex h-[48px] items-center gap-x-[13px] rounded-full bg-[#FDC70C] px-5 text-sm font-medium leading-[22px] text-black lg:gap-x-[12.75px] lg:px-6 lg:text-[15px]"
                 >
                   <span>Whitelist for Early Access</span>
                   <ArrowRight />
                 </Link>
                 <Link
-                  href="https://forms.gle/fuYGBJQF5W4amLdt6"
+                  href="#"
                   className="inline-flex h-[48px] items-center gap-x-[13px] rounded-full px-5 text-sm font-medium leading-[22px] text-white lg:gap-x-[12.75px] lg:px-6 lg:text-[15px]"
                 >
                   <span>Subscribe with Email</span>
