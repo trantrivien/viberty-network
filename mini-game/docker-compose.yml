@@ -1,10 +1,8 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  bubbo-bubbo:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  mini-game:
+    image: trivien/viberty-game:latest
     container_name: viberty-game
     ports:
       - "5173:80"
