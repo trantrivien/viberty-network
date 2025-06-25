@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -54,6 +54,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd viberty-network/landing-page
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            docker compose down
+            docker compose pull
+            docker compose up -d

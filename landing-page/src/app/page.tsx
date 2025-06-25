@@ -57,7 +57,7 @@ const Home = () => {
 
   return (
     <>
-   
+      {/* lg */}
       <header className="relative hidden border-b border-b-white/10 lg:block">
         <div className="flex h-[99px] items-center justify-between px-20">
           <Link href="/">
