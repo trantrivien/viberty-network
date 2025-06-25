@@ -131,7 +131,6 @@ const Home = () => {
               Invest together with Binance Labs, Pantera Capital,  and a16z.
             </p>
 
-
             <div className="mt-[38px] inline-flex flex-col items-center gap-x-6 gap-y-[18px] lg:mt-12">
               <div className="flex flex-col items-center justify-between space-x-4 lg:flex-row">
                 <Link
