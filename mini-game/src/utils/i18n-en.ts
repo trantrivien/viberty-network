@@ -3,10 +3,10 @@
  */
 export const i18nDict = {
     pixiLogoHeader: 'Made with',
-    gameTitle: 'BUBBO',
-    gameSubtitle: 'SPACE MACHINE',
+    gameTitle: 'VIBOO',
+    gameSubtitle: 'VIBERTY SPACE',
     titlePlay: 'SHOOT BUBBLES!',
-    forkGithub: 'Fork me\non Github',
+    forkGithub: '',
     helperMobile: 'Hold to aim\nRelease to shoot!',
     helperDesktop: 'Move mouse to aim\nLeft click to shoot!',
     paused: 'GAME PAUSED',
