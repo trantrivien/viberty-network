@@ -1,0 +1,68 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'back-end/**'
+
+jobs:
+  deploy:
+    name: Deploy Back-end to VPS
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: mining-backend
+      CONTAINER_NAME: mining-api
+      TARGET_DIR: ~/mining-app
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Build Docker image
+      - name: Build Docker image
+        run: |
+          cd back-end
+          docker build -t $IMAGE_NAME .
+
+      # 4. Save image to TAR file
+      - name: Save Docker image to file
+        run: |
+          docker save $IMAGE_NAME > image.tar
+
+      # 5. Write .env from GitHub Secret
+      - name: Write .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      # 6. Copy image + .env to VPS
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: |
+            image.tar
+            .env
+          target: ${{ env.TARGET_DIR }}
+
+      # 7. SSH to VPS and run container
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ env.TARGET_DIR }}
+            docker load < image.tar
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            docker rm ${{ env.CONTAINER_NAME }} || true
+            docker run -d --name ${{ env.CONTAINER_NAME }} -p 8000:8000 --env-file .env ${{ env.IMAGE_NAME }}

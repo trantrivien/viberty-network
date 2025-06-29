@@ -1,44 +1,30 @@
-import express, { Application } from "express";
-import cors from "cors";
-import { initDatabase } from "./config/database";
-import { env } from "./config/env";
-import routes from "./routes";
-import { errorMiddleware } from "./middleware/errorMiddleware";
-import { logger } from "./utils/logger";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import itemRoutes from './routes/item.routes';
+import miningRoutes from './routes/mining.routes';
+import taskRoutes from './routes/task.routes';
+import transactionRoutes from './routes/transaction.routes';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
+import notificationRoutes from './routes/notification.routes';
+import uploadRoutes from './routes/upload.routes';
 
+import './cron/mining.cron';
 
-const app: Application = express();
-
+const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  // This is important for the cookie to be saved properly!!!
-  cors({
-    origin: `${process.env.NODE_ENV === "development" ? "http" : "https"}://${process.env.CLIENT_DOMAIN}`,
-    credentials: true,
-  }),
-);
- 
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/items', itemRoutes);
+app.use('/api/mining', miningRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Routes
-app.use("/api", routes);
-
-// Error handling
-app.use(errorMiddleware);
-
-// Start server
-const startServer = async () => {
-  try {
-    const pool = await initDatabase();
-    app.set("dbPool", pool);
-    app.listen(env.port, () => {
-      logger.info(`Server running on port ${env.port}`);
-    });
-  } catch (error) {
-    logger.error("Failed to start server:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
+export default app;

@@ -23,7 +23,7 @@ export default function GamePage() {
   return (
     <iframe
       ref={iframeRef}
-      src="http://localhost:5173"
+      src="https://game.viberty.network/"
       className="w-screen h-screen border-none pb-[50px]"
       sandbox="allow-scripts allow-same-origin"
     />

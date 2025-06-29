@@ -14,10 +14,9 @@ export function useWeb3Login() {
 
     const res = await verifyLogin({ payload, signature });
 
-    // B4: Cập nhật store nếu cần
-    useAuthStore.getState().setToken(res.token);
+
     const userInfo = await fetch("/api/user/me").then(r => r.json());
-    useAuthStore.getState().setUser(userInfo);
+
   };
 
   return { login };
