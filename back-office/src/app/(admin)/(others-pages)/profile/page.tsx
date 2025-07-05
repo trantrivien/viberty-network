@@ -1,6 +1,7 @@
 import UserAddressCard from "@/components/user-profile/UserAddressCard";
 import UserInfoCard from "@/components/user-profile/UserInfoCard";
 import UserMetaCard from "@/components/user-profile/UserMetaCard";
+import { useUserStore } from "@/stores/useUserStore";
 import { Metadata } from "next";
 import React from "react";
 

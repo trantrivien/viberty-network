@@ -4,12 +4,19 @@ import FileInput from '@/components/form/input/FileInput';
 import TextArea from '@/components/form/input/TextArea';
 import Button from '@/components/ui/button/Button';
 import { Modal } from '@/components/ui/modal';
+import { createTask } from '@/lib/services/tasksService';
+import { uploadImage } from '@/lib/services/upload';
+import { useLoadingStore } from '@/stores/useLoadingStore';
+import { useUserStore } from '@/stores/useUserStore';
+import { Task } from '@/types';
 import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface IAddTaskProps {
     selectedTask: string;
     isOpen: boolean;
     closeModal: () => void;
+    reloadTasks: () =>  void;
 }
 
 export type TaskType = 'like_video' | 'subscribe_youtube' | 'follow_x' | 'other';
@@ -23,34 +30,62 @@ export interface TaskForm {
     imageFile?: File;
 }
 
-export default function AddTask({ selectedTask, closeModal, isOpen }: IAddTaskProps) {
+export default function AddTask({ selectedTask, closeModal, isOpen , reloadTasks}: IAddTaskProps) {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [imageFile, setImageFile] = useState<any>();
+    const setLoading = useLoadingStore((state) => state.setLoading);
+    const user = useUserStore((state) => state.user);
 
-    const [taskForm, setTaskForm] = useState<TaskForm>({
-        title: '',
-        description: '',
-        rewardAmount: 0,
-        type: 'like_video',
-        externalLink: '',
-        imageFile: undefined,
-    });
+    const [taskForm, setTaskForm] = useState<Task>({} as Task);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            setTaskForm({ ...taskForm, imageFile: file });
+            setImageFile(file);
             const imageUrl = URL.createObjectURL(file);
             setPreviewImage(imageUrl);
         }
     };
 
-    const handleSubmit = () => {
-        console.log('Task form data:', taskForm);
+
+
+    const handleSubmit = async () => {
+      setLoading(true);
+      try {
+        let imageUrl = '';
+    
+        if (imageFile) {
+          const result = await uploadImage(imageFile);
+          imageUrl = result.imageUrl;
+        }
+    
+        const payload: Task = {
+          title: taskForm.title,
+          description: taskForm.description,
+          type: taskForm.type,
+          reward: taskForm.reward,
+          reward_type: taskForm.reward_type,
+          image_url: imageUrl,
+          created_by: user?.user_id as number,
+        };
+    
+        await createTask(payload);
+      
+        toast.success('Task created!')
+        closeModal();
+        reloadTasks()
+      } catch (err) {
+        console.error(err);
+        toast.error('Error creating task!');
+      } finally {
+        setLoading(false);
+      }
     };
+
     return (
         <div>
-            <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px]   p-6 lg:p-10">
-                <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
+            <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px]  p-6 lg:p-10">
+                <div className="flex flex-col px-2 overflow-y-auto  max-h-[80vh]   custom-scrollbar">
                     <div>
                         <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
                             {selectedTask ? 'Edit Task' : 'Add Task'}
@@ -79,7 +114,7 @@ export default function AddTask({ selectedTask, closeModal, isOpen }: IAddTaskPr
                             <div className="flex flex-wrap items-center gap-4 w-full sm:gap-5">
                                 <TextArea
                                     className="w-full"
-                                    value={taskForm.description}
+                                    value={taskForm.description ?? ''}
                                     onChange={(value) => setTaskForm({ ...taskForm, description: value })}
                                     rows={3}
                                 />
@@ -94,51 +129,47 @@ export default function AddTask({ selectedTask, closeModal, isOpen }: IAddTaskPr
                                 <input
                                     id="event-title"
                                     type="number"
-                                    value={taskForm.rewardAmount}
-                                    onChange={(e) =>
-                                        setTaskForm({ ...taskForm, rewardAmount: parseFloat(e.target.value) })
-                                    }
+                                    value={taskForm.reward}
+                                    onChange={(e) => setTaskForm({ ...taskForm, reward: parseFloat(e.target.value) })}
                                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                                 />
                             </div>
                         </div>
-
-                        <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
-                            Task Type
-                        </label>
-                        <select
-                            value={taskForm.type}
-                            onChange={(e) => setTaskForm({ ...taskForm, type: e.target.value as TaskType })}
-                            className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                        >
-                            <option value="like_video">Like Video</option>
-                            <option value="subscribe_youtube">Subscribe YouTube</option>
-                            <option value="follow_x">Follow X</option>
-                            <option value="other">Other</option>
-                        </select>
-
                         <div className="mt-6">
-                            <div className="relative">
-                                <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400 mt-6">
-                                    External Link
-                                </label>
-                                <input
-                                    type="text"
-                                    value={taskForm.externalLink}
-                                    onChange={(e) => setTaskForm({ ...taskForm, externalLink: e.target.value })}
-                                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                                />
-                            </div>
+                            <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
+                                Reward Type
+                            </label>
+                            <select
+                                value={taskForm.reward_type}
+                                onChange={(e) => setTaskForm({ ...taskForm, reward_type: e.target.value as any })}
+                                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                            >
+                                <option value="money">Money</option>
+                                <option value="mining_speed">Mining Speed</option>
+                            </select>
                         </div>
-
+                        <div className="mt-6">
+                            <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
+                                Task Type
+                            </label>
+                            <select
+                                value={taskForm.type}
+                                onChange={(e) => setTaskForm({ ...taskForm, type: e.target.value as any })}
+                                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                            >
+                                <option value="fixed">Fixed</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
                         <div className="mt-6">
                             <div className="relative">
                                 <DatePicker
                                     id="date-picker"
                                     label="Enter End Date"
                                     placeholder="Select a date"
-                                    onChange={(dates, currentDateString) => {
-                                        console.log({ dates, currentDateString });
+                                    onChange={(dates:any, currentDateString:any) => {
+                                        setTaskForm({ ...taskForm, end_date: dates as any })
                                     }}
                                 />
                             </div>

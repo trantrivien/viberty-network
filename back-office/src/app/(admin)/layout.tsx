@@ -6,6 +6,7 @@ import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import React from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AdminLayout({
   children,
@@ -22,15 +23,6 @@ export default function AdminLayout({
     : "lg:ml-[90px]";
 
 
-    const router = useRouter();
-
-    useEffect(() => {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        router.replace('/signin');
-      }
-    }, []);
-  
   return (
     <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
@@ -42,6 +34,13 @@ export default function AdminLayout({
       >
         {/* Header */}
         <AppHeader />
+        <Toaster 
+        
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName="z-99999"
+        />
         {/* Page Content */}
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
       </div>

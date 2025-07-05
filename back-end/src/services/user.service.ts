@@ -1,17 +1,21 @@
 import { db } from '../config/database';
-import { User } from '../models/User.model';
+import { SafeUser, User } from '../models/User.model';
 
-export const getAllUsers = async (): Promise<User[]> => {
+export const getAllUsers = async (): Promise<SafeUser[]> => {
   const [rows] = await db.query('SELECT * FROM users');
-  return rows as User[];
+  return rows as SafeUser[];
 };
 
-export const getUserById = async (userId: number): Promise<User | null> => {
+export const getUserById = async (userId: number): Promise<SafeUser | null> => {
   const [rows] = await db.query('SELECT * FROM users WHERE user_id = ?', [userId]);
-  return (rows as User[])[0] || null;
-};
+  const user = (rows as User[])[0];
 
-export const updateUserById = async (userId: number, data: Partial<User>): Promise<void> => {
+  if (!user) return null;
+
+  const { password, ...safeUser } = user;
+  return safeUser;
+};
+export const updateUserById = async (userId: number, data: Partial<SafeUser>): Promise<void> => {
   const fields = Object.keys(data)
     .map(key => `${key} = ?`)
     .join(', ');

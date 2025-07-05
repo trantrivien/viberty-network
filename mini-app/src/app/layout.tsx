@@ -6,10 +6,10 @@ import { Toaster } from "react-hot-toast";
 
 import { QueryClient } from "@tanstack/react-query";
 
-import BottomNav from "@/components/BottomNav";
 import "@/styles/globals.css";
 import { usePathname } from "next/navigation";
 import { ThirdwebProvider } from "thirdweb/react";
+import BottomNav from "../components/BottomNav";
 
 export default function RootLayout({
   children,

@@ -1,40 +1,74 @@
-import { post, get } from '@/lib/api/request';
+import { post } from '@/lib/api/request'
 
-export async function logout() {
-    await post('/auth/logout');
-    if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-    }
-}
-
-// Refresh token
-export async function refreshAccessToken() {
-    const res = await post('/auth/refresh');
-}
-
-export async function register(username: string, password?: string) {
-    try {
-        const registerResult = await post('/admin/register', {
-            username: username,
-            password: password,
-        });
-        return registerResult;
-    } catch (err: any) {
-        if (!err.message.includes('409')) {
-            throw err;
-        }
-    }
+export async function register(username: string, email: string, password: string) {
+  try {
+    const res = await post('/auth/register', { username, email, password })
+    return res
+  } catch (error: any) {
+    // optional: toast.error('Đăng ký thất bại')
+    console.error('Register failed:', error)
+    throw error
+  }
 }
 
 export async function login(username: string, password: string) {
-    const response = await post('/admin/login-admin', { username, password });
-    const { token, refresh_token } = response.data;
-    document.cookie = `access_token=${token}; path=/; max-age=86400`;
-    document.cookie = `refresh_token=${refresh_token}; path=/; max-age=604800`; // 7 ngày
-    localStorage.setItem('access_token', token);
-    localStorage.setItem('refresh_token', refresh_token);
+  try {
+    const response = await post('/auth/login', { username, password })
+    const { accessToken } = response
 
-    return {
-      token,
-    };
+    document.cookie = `access_token=${accessToken}; path=/; max-age=86400`
+    localStorage.setItem('access_token', accessToken)
+    
+
+    return { accessToken }
+  } catch (error: any) {
+    console.error('Login failed:', error)
+    throw error
+  }
+}
+
+export async function walletLogin(wallet_address: string) {
+  try {
+    const response = await post('/auth/wallet-login', { wallet_address })
+    const { accessToken } = response
+
+    document.cookie = `access_token=${accessToken}; path=/; max-age=86400`
+    localStorage.setItem('access_token', accessToken)
+
+    return { accessToken }
+  } catch (error: any) {
+    console.error('Wallet login failed:', error)
+    throw error
+  }
+}
+
+export async function refreshAccessToken() {
+  try {
+    const res = await post('/auth/refresh-token')
+    const { accessToken } = res
+
+    document.cookie = `access_token=${accessToken}; path=/; max-age=86400`
+    localStorage.setItem('access_token', accessToken)
+
+    return { accessToken }
+  } catch (error: any) {
+    console.error('Refresh token failed:', error)
+    throw error
+  }
+}
+
+export async function logout() {
+  try {
+    await post('/auth/logout') // Nếu backend có
+  } catch (err) {
+    console.warn('Logout error:', err)
+  }
+
+  document.cookie = 'access_token=; Max-Age=0; path=/'
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+
+  if (typeof window !== 'undefined') {
+    window.location.href = '/signin'
+  }
 }

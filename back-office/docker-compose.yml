@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  viberty-bo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: viberty-back-office
+    ports:
+      - "3000:3010"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped

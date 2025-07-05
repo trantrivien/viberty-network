@@ -21,8 +21,8 @@ export default function SignInForm() {
     const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const result = await login(form.username, form.password);
-        if (result.token) {
-            router.replace('/');
+        if(result){
+            router.push('/')
         }
     };
 

@@ -14,15 +14,12 @@ declare global {
   }
 }
 
-// Middleware: Kiểm tra access token
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.access_token;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Access token missing or invalid' });
+  if (!token) {
+    return res.status(401).json({ error: 'Access token missing' });
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as AuthPayload;
@@ -33,7 +30,6 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
-// Middleware: Kiểm tra quyền (role)
 export const requireRole = (role: 'admin' | 'user') => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {

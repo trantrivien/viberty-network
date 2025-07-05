@@ -10,10 +10,17 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import notificationRoutes from './routes/notification.routes';
 import uploadRoutes from './routes/upload.routes';
+import cors from 'cors';
 
 import './cron/mining.cron';
 
+
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true 
+  }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
