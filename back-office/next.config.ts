@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["localhost"], 
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,

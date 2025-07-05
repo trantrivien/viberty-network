@@ -5,12 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: viberty-back-office
+    container_name: trivien/viberty-back-office
     ports:
-      - "3000:3010"
+      - "3005:3000"
     environment:
       - NODE_ENV=production
-    volumes:
-      - .:/app
-      - /app/node_modules
     restart: unless-stopped

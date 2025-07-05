@@ -11,7 +11,7 @@ import { swaggerSpec } from './config/swagger';
 import notificationRoutes from './routes/notification.routes';
 import uploadRoutes from './routes/upload.routes';
 import cors from 'cors';
-
+import dashboardRoutes from './routes/dashboard.routes';
 import './cron/mining.cron';
 
 
@@ -31,6 +31,8 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
 app.use('/uploads', express.static('uploads'));
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

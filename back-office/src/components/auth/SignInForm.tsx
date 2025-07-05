@@ -18,8 +18,8 @@ export default function SignInForm() {
     const router = useRouter();
     const [isChecked, setIsChecked] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const handleLogin = async () => {
+
         const result = await login(form.username, form.password);
         if(result){
             router.push('/')
@@ -90,7 +90,7 @@ export default function SignInForm() {
                                 <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">Or</span>
                             </div>
                         </div>
-                        <form>
+                 
                             <div className="space-y-6">
                                 <div>
                                     <Label>
@@ -138,7 +138,7 @@ export default function SignInForm() {
                                     </Button>
                                 </div>
                             </div>
-                        </form>
+                        
                     </div>
                 </div>
             </div>
