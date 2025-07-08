@@ -7,7 +7,7 @@ import { Item, UserItem } from '@/types/item'
 export async function getAllItems(): Promise<Item[]> {
   try {
     const res = await get('/items')
-    return res.data
+    return res
   } catch (error: any) {
     console.error('Get all items error:', error)
     throw error
@@ -43,7 +43,7 @@ export async function updateItem(id: number, data: Item): Promise<{ message: str
 /**
  * Delete an item
  */
-export async function deleteItem(id: number): Promise<{ message: string }> {
+export async function deleteItem(id?: number): Promise<{ message: string }> {
   try {
     const res = await del(`/items/${id}`)
     return res.data

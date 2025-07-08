@@ -4,19 +4,21 @@ import FileInput from '@/components/form/input/FileInput';
 import TextArea from '@/components/form/input/TextArea';
 import Button from '@/components/ui/button/Button';
 import { Modal } from '@/components/ui/modal';
-import { createTask } from '@/lib/services/tasksService';
+import { createTask, updateTask } from '@/lib/services/tasksService';
 import { uploadImage } from '@/lib/services/upload';
 import { useLoadingStore } from '@/stores/useLoadingStore';
+import { useProfileStore } from '@/stores/useProfileStore';
 import { useUserStore } from '@/stores/useUserStore';
-import { Task } from '@/types';
-import React, { useState } from 'react';
+import { Task } from '@/types/task';
+import { getImageUrl } from '@/utils/helpers';
+import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface IAddTaskProps {
-    selectedTask: string;
+    selectedTask?: Task;
     isOpen: boolean;
     closeModal: () => void;
-    reloadTasks: () =>  void;
+    reloadTasks: () => void;
 }
 
 export type TaskType = 'like_video' | 'subscribe_youtube' | 'follow_x' | 'other';
@@ -30,11 +32,11 @@ export interface TaskForm {
     imageFile?: File;
 }
 
-export default function AddTask({ selectedTask, closeModal, isOpen , reloadTasks}: IAddTaskProps) {
+export default function AddTask({ selectedTask, closeModal, isOpen, reloadTasks }: IAddTaskProps) {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<any>();
     const setLoading = useLoadingStore((state) => state.setLoading);
-    const user = useUserStore((state) => state.user);
+    const profile = useProfileStore((state) => state.profile);
 
     const [taskForm, setTaskForm] = useState<Task>({} as Task);
 
@@ -47,40 +49,49 @@ export default function AddTask({ selectedTask, closeModal, isOpen , reloadTasks
         }
     };
 
-
+    const handleCreateTask = async (payload: Task) => {
+        await createTask(payload);
+    };
+    const handleUpdateTask = async (id: number, payload: Task) => {
+        await updateTask(id, payload);
+    };
 
     const handleSubmit = async () => {
-      setLoading(true);
-      try {
-        let imageUrl = '';
-    
-        if (imageFile) {
-          const result = await uploadImage(imageFile);
-          imageUrl = result.imageUrl;
+        setLoading(true);
+        try {
+            let imageUrl = '';
+
+            if (imageFile) {
+                const result = await uploadImage(imageFile);
+                imageUrl = result.imageUrl;
+            }
+
+            const payload: Task = {
+                title: taskForm.title,
+                description: taskForm.description,
+                type: taskForm.type,
+                reward: taskForm.reward,
+                reward_type: taskForm.reward_type,
+                image_url: imageUrl,
+                created_by: profile?.user_id as number,
+            };
+
+            selectedTask?.task_id ? handleUpdateTask(selectedTask.task_id, payload) : handleCreateTask(payload);
+
+            toast.success('Task created!');
+            closeModal();
+            reloadTasks();
+        } catch (err) {
+            console.error(err);
+            toast.error('Error creating task!');
+        } finally {
+            setLoading(false);
         }
-    
-        const payload: Task = {
-          title: taskForm.title,
-          description: taskForm.description,
-          type: taskForm.type,
-          reward: taskForm.reward,
-          reward_type: taskForm.reward_type,
-          image_url: imageUrl,
-          created_by: user?.user_id as number,
-        };
-    
-        await createTask(payload);
-      
-        toast.success('Task created!')
-        closeModal();
-        reloadTasks()
-      } catch (err) {
-        console.error(err);
-        toast.error('Error creating task!');
-      } finally {
-        setLoading(false);
-      }
     };
+
+    useEffect(() => {
+        selectedTask && setTaskForm(selectedTask);
+    }, [selectedTask]);
 
     return (
         <div>
@@ -168,8 +179,8 @@ export default function AddTask({ selectedTask, closeModal, isOpen , reloadTasks
                                     id="date-picker"
                                     label="Enter End Date"
                                     placeholder="Select a date"
-                                    onChange={(dates:any, currentDateString:any) => {
-                                        setTaskForm({ ...taskForm, end_date: dates as any })
+                                    onChange={(dates: any, currentDateString: any) => {
+                                        setTaskForm({ ...taskForm, end_date: dates as any });
                                     }}
                                 />
                             </div>
@@ -178,13 +189,23 @@ export default function AddTask({ selectedTask, closeModal, isOpen , reloadTasks
                         <div className="mt-6">
                             <div className="relative">
                                 <FileInput onChange={handleFileChange} className="custom-class" />
-                                {previewImage && (
+                                {previewImage ? (
                                     <div className="mt-4">
                                         <img
                                             src={previewImage}
                                             alt="Preview"
                                             className="rounded-md max-h-32 border border-gray-300 dark:border-gray-700"
                                         />
+                                    </div>
+                                ) : (
+                                    <div className="mt-4">
+                                        {selectedTask && (
+                                            <img
+                                                src={getImageUrl(selectedTask?.image_url)}
+                                                alt="Preview"
+                                                className="rounded-md max-h-32 border border-gray-300 dark:border-gray-700"
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </div>

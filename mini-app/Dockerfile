@@ -1,27 +1,18 @@
-# Use a Node.js base image
-FROM node:20-alpine
+FROM node:20-slim
 
-# Install build tools for native dependencies
-RUN apk add --no-cache python3 make g++ bash
+# Optional: Giảm size image
+RUN apt-get update && apt-get install -y python3 make g++ bash && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-
-# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
 
-# Build the Next.js app
 RUN npm run build
 
-# Expose the port Next.js runs on
 EXPOSE 3001
 
-# Start the app
 CMD ["npm", "run", "start"]

@@ -10,6 +10,9 @@ export interface User {
   role: 'user' | 'admin';
   created_at: Date;
   updated_at: Date;
+  image_url?: string;
+  is_mining?: boolean;
+  total_mined?: number;
 }
 
 export type SafeUser = Omit<User, 'password'>;

@@ -2,10 +2,27 @@ import { Request, Response } from 'express';
 import * as userService from '../services/user.service';
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await userService.getAllUsers();
-  res.json(users);
-};
+  const {
+    page = 1,
+    limit = 10,
+    role,
+    is_banned,
+    search
+  } = req.query;
 
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+
+  const result = await userService.getAllUsers({
+    page: pageNum,
+    limit: limitNum,
+    role: role as string,
+    is_banned: is_banned === 'true' ? true : is_banned === 'false' ? false : undefined,
+    search: search as string
+  });
+
+  res.json(result);
+};
 export const getMyProfile = async (req: Request, res: Response) => {
   const user = await userService.getUserById(req.user!.userId);
   res.json(user);

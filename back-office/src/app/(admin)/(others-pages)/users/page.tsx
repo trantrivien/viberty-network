@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   // other metadata
 };
 
-export default function BasicTables() {
+export default function UserManager() {
   return (
     <div>
       <PageBreadcrumb pageTitle="User Manager" />

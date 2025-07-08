@@ -1,6 +1,11 @@
 import { get, post } from '@/lib/api/request'
 import type { Transaction } from '@/types'
-
+import { PaginatedResponse } from '@/types/common'
+export interface TransactionQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+}
 /**
  * Get current user's transactions
  */
@@ -17,9 +22,14 @@ export async function getMyTransactions(): Promise<Transaction[]> {
 /**
  * Get all transactions (admin)
  */
-export async function getAllTransactions(): Promise<Transaction[]> {
+export async function getAllTransactions( params: TransactionQueryParams = {}): Promise<PaginatedResponse<Transaction>> {
   try {
-    const res = await get('/transactions/all')
+    const query = new URLSearchParams()
+    if (params.page) query.append('page', params.page.toString())
+    if (params.limit) query.append('limit', params.limit.toString())
+    if (params.search) query.append('search', params.search)
+
+    const res = await get(`/transactions/all?${query.toString()}`)
     return res
   } catch (error) {
     console.error('Get all transactions failed:', error)

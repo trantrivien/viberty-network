@@ -1,4 +1,4 @@
-name: Viberty Network Landing page CI
+name: Viberty Network Back Office page CI
 
 on:
   push:

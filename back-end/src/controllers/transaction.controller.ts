@@ -4,8 +4,8 @@ import * as txService from "../services/transaction.service";
 export const getUserTransactions = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
+      return res.status(401).json({ error: "Unauthorized" });
+    }
     const userId = req.user.userId;
     const data = await txService.getUserTransactions(userId);
     res.json(data);
@@ -16,8 +16,28 @@ export const getUserTransactions = async (req: Request, res: Response) => {
 
 export const getAllTransactions = async (req: Request, res: Response) => {
   try {
-    const data = await txService.getAllTransactions();
-    res.json(data);
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = req.query.search as string | undefined;
+
+    const { transactions, total } = await txService.getAllTransactions(
+      page,
+      limit,
+      search
+    );
+
+    res.json({
+      data: transactions,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

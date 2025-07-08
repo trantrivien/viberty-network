@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
 
   images: {
-    domains: ["localhost"], 
+    domains: ["localhost", "randomuser.me", "example.com"], 
   },
   eslint: {
     ignoreDuringBuilds: true,

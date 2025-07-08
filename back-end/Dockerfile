@@ -1,24 +1,21 @@
-# Dockerfile
+FROM node:20-alpine
 
-# Base image
-FROM node:20.12.2-alpine
+# Install dependencies for building native modules if needed
+RUN apk add --no-cache python3 make g++ bash
 
-
-# Create app directory
 WORKDIR /app
 
-# Install dependencies
-COPY package.json yarn.lock ./
+COPY package*.json ./
 RUN yarn install --frozen-lockfile
 
-# Copy source code
+# Copy toàn bộ code vào container
 COPY . .
 
-# Build TypeScript (nếu dùng build) — nếu chạy ts-node thì không cần
-# RUN yarn build
+# Build TypeScript sang JavaScript
+RUN yarn build
 
-# Expose port (8000 nếu bạn dùng)
+# Expose port bạn dùng, ví dụ: 8000
 EXPOSE 8000
 
-# Start the app
-CMD ["yarn", "dev"]
+# Start app dùng file đã build
+CMD ["yarn", "start"]

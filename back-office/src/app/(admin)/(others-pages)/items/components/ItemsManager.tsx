@@ -1,44 +1,46 @@
 'use client';
 
-import Button from '@/components/ui/button/Button';
+import Badge from '@/components/ui/badge/Badge';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
-import { deleteTask, getAllTasks } from '@/lib/services/tasksService';
-import { getImageUrl } from '@/utils/helpers';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import AddTask from './AddTask';
-import { Task } from '@/types/task';
+import { Dropdown } from '@/components/ui/dropdown/Dropdown';
+import Button from '@/components/ui/button/Button';
+import { get } from '@/lib/api/request';
 
-export default function ListTask() {
+import toast from 'react-hot-toast';
+import { getImageUrl } from '@/utils/helpers';
+import { deleteItem, getAllItems } from '@/lib/services/itemsService';
+import { Item } from '@/types/item';
+
+export default function ItemsManager() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [listTask, setListTask] = useState<Task[]>([]);
-    const [selectedTask, setSelectedTask] = useState<Task>();
+    const [listItems, setListItems] = useState<Item[]>([]);
     const closeModal = () => {
         setIsOpen(false);
-        setSelectedTask({} as Task);
     };
 
-    const getListTask = async () => {
-        const result = await getAllTasks();
-        setListTask(result);
+    const getListItems = async () => {
+        const result = await getAllItems();
+        console.log(result);
+        setListItems(result);
     };
 
     useEffect(() => {
-        getListTask();
+        getListItems();
     }, []);
 
-    const handleDeleteTask = async (taskId?: number) => {
+    const handleDeleteItems = async (itemId?: number) => {
         try {
-            const result = await deleteTask(taskId);
+            const result = await deleteItem(itemId);
             toast.success(result.message ?? '');
-            getListTask();
+            getListItems();
         } catch (error) {
             toast.error('something went wrong try again');
         }
     };
 
-    const handleConfirmDelete = (taskId?: number) => {
+    const handleConfirmDelete = (itemId?: number) => {
         toast((t) => (
             <div>
                 Are you sure <b>Delete this task</b>
@@ -46,7 +48,7 @@ export default function ListTask() {
                     <Button
                         onClick={() => {
                             toast.dismiss(t.id);
-                            handleDeleteTask(taskId);
+                            handleDeleteItems(itemId);
                         }}
                     >
                         Yes
@@ -59,16 +61,12 @@ export default function ListTask() {
         ));
     };
 
-    const handleEditTask = (task: Task) => {
-        setSelectedTask(task);
-        setIsOpen(true);
-    };
     return (
         <div>
             <Button className="mb-4" onClick={() => setIsOpen(true)}>
-                Create Task
+                Create Items
             </Button>
-            <AddTask reloadTasks={getListTask} selectedTask={selectedTask} isOpen={isOpen} closeModal={closeModal} />
+            {/* <AddItems reloadItemss={getListItems} selectedItems="" isOpen={isOpen} closeModal={closeModal} /> */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                 <div className="max-w-full overflow-x-auto">
                     <div className="min-w-[1102px]">
@@ -99,13 +97,13 @@ export default function ListTask() {
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
-                                        Reward Amount
+                                        Reward
                                     </TableCell>
                                     <TableCell
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
-                                        Reward Type
+                                        Item Price
                                     </TableCell>
                                     <TableCell
                                         isHeader
@@ -113,63 +111,63 @@ export default function ListTask() {
                                     >
                                         Created At
                                     </TableCell>
+
                                     <TableCell
                                         isHeader
                                         className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                     >
-                                        Edit
+                                        Action
                                     </TableCell>
                                 </TableRow>
                             </TableHeader>
 
                             {/* Table Body */}
                             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                {listTask.map((task: Task) => (
-                                    <TableRow key={task.task_id}>
+                                {listItems?.map((item: Item) => (
+                                    <TableRow key={item.item_id}>
                                         <TableCell className="px-5 py-4 sm:px-6 text-start">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 overflow-hidden rounded-sm">
                                                     <Image
                                                         width={40}
                                                         height={40}
+                                                        
                                                         src={
-                                                            task.image_url
-                                                                ? getImageUrl(task.image_url)
+                                                            item.image_url
+                                                                ? getImageUrl(item.image_url)
                                                                 : '/images/user/logo.png'
                                                         }
-                                                        alt={task.title}
+                                                        alt={item.name}
                                                     />
                                                 </div>
                                                 <div>
                                                     <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                        {task.title}
+                                                        {item.name}
                                                     </span>
-                                                    {/* <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                                                        {order.user.role}
-                                                    </span> */}
                                                 </div>
                                             </div>
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            {task.description ?? '---'}
+                                            {item.description ?? '---'}
+                                        </TableCell>
+                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 uppercase">
+                                            {item.type}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            {task.type}
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            {task.reward}
+                                            {item.mining_speed_boost}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                            {task.reward_type}
+                                            {item.price}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                            {task.created_at}
+                                            {(new Date(item.created_at)).toLocaleDateString()}
                                         </TableCell>
+
                                         <TableCell className="px-4 gap-2 flex py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                            <Button onClick={() => handleEditTask(task)}>Edit</Button>
+                                            <Button>Edit</Button>
                                             <Button
-                                                onClick={() => handleConfirmDelete(task.task_id)}
+                                                onClick={() => handleConfirmDelete(item.item_id)}
                                                 className="bg-red-500"
                                             >
                                                 Delete

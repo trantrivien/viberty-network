@@ -1,18 +1,19 @@
-import { User } from '@/types/user';
-import { create } from 'zustand';
+// stores/useUserStore.ts
 
-type UserStore = {
-    user: User | null;
-    listUser: User[] | [];
-    setUser: (user: User) => void;
-    setListUser: (listUser: User[]) => void;
-    clearUser: () => void;
-};
+import { create } from 'zustand'
+import type { User } from '@/types/user'
+import { PaginationMeta } from '@/types/common'
+
+interface UserStore {
+  listUser: User[]
+  meta: PaginationMeta | null
+  setMeta: (meta: PaginationMeta) => void
+  setListUser: (users: User[]) => void
+}
 
 export const useUserStore = create<UserStore>((set) => ({
-    user: null,
-    listUser: [],
-    setListUser: (listUser: User[]) => set({ listUser }),
-    setUser: (user) => set({ user }),
-    clearUser: () => set({ user: null }),
-}));
+  listUser: [],
+  meta: null,
+  setListUser: (users) => set({ listUser: users }),
+  setMeta: (meta) => set({ meta }),
+}))

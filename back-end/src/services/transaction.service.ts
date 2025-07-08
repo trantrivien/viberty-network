@@ -11,14 +11,57 @@ export const getUserTransactions = async (user_id: number): Promise<Transaction[
   return rows as Transaction[];
 };
 
-export const getAllTransactions = async (): Promise<Transaction[]> => {
-  const [rows] = await db.query(
-    `SELECT * FROM transactions 
-     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-     ORDER BY created_at DESC`
-  );
-  return rows as Transaction[];
+export const getAllTransactions = async (
+  page = 1,
+  limit = 10,
+  search?: string
+): Promise<{ transactions: any[]; total: number }> => {
+  const offset = (page - 1) * limit;
+  const params: any[] = [];
+  let where = 'WHERE 1=1';
+
+  if (search) {
+    where += ` AND (
+      u1.username LIKE ? OR u1.wallet_address LIKE ? OR
+      u2.username LIKE ? OR u2.wallet_address LIKE ?
+    )`;
+    const keyword = `%${search}%`;
+    params.push(keyword, keyword, keyword, keyword);
+  }
+
+  const [[{ total }]] = await db.query<any[]>(`
+    SELECT COUNT(*) AS total
+    FROM transactions t
+    LEFT JOIN users u1 ON t.from_user_id = u1.user_id
+    LEFT JOIN users u2 ON t.to_user_id = u2.user_id
+    ${where}
+  `, params);
+
+  const [rows] = await db.query<any[]>(`
+    SELECT 
+      t.transaction_id,
+      t.amount,
+      t.type,
+      t.description,
+      t.created_at,
+      u1.user_id AS from_user_id,
+      u1.username AS from_username,
+      u2.user_id AS to_user_id,
+      u2.username AS to_username
+    FROM transactions t
+    LEFT JOIN users u1 ON t.from_user_id = u1.user_id
+    LEFT JOIN users u2 ON t.to_user_id = u2.user_id
+    ${where}
+    ORDER BY t.created_at DESC
+    LIMIT ? OFFSET ?
+  `, [...params, limit, offset]);
+
+  return {
+    transactions: rows,
+    total,
+  };
 };
+
 
 export const transfer = async (from_user_id: number, to_wallet_address: string, amount: number): Promise<void> => {
   const [toRows] = await db.query('SELECT * FROM users WHERE wallet_address = ?', [to_wallet_address]);

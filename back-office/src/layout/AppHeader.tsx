@@ -4,7 +4,7 @@ import NotificationDropdown from '@/components/header/NotificationDropdown';
 import UserDropdown from '@/components/header/UserDropdown';
 import { useSidebar } from '@/context/SidebarContext';
 import { getMyProfile } from '@/lib/services/userService';
-import { useUserStore } from '@/stores/useUserStore';
+import { useProfileStore } from '@/stores/useProfileStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useEffect, useRef } from 'react';
@@ -14,7 +14,8 @@ const AppHeader: React.FC = () => {
 
     const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
-    const setUser = useUserStore((state) => state.setUser);
+
+    const setProfile = useProfileStore((state) => state.setProfile);
 
     const handleToggle = () => {
         if (window.innerWidth >= 1024) {
@@ -46,7 +47,7 @@ const AppHeader: React.FC = () => {
 
     const getProfile = async () => {
         const result = await getMyProfile();
-        setUser(result);
+        setProfile(result);
     };
 
     useEffect(() => {
